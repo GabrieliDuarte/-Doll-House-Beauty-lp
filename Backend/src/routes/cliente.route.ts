@@ -27,3 +27,18 @@ clienteRouter.post("/", async (request: Request<object, object, CriarCliente>, r
         return response.status(500).json({ error: "Erro interno do servidor" });
     }
 });
+
+clienteRouter.get("/:id", async (request: Request, response: Response) => {
+    try {
+        const id = request.params.id as string;
+        const cliente = await clienteService.getById(id);
+        
+        return response.json(cliente);
+    } catch (error: any) {
+        if (error.message === "CLIENTE_NAO_ENCONTRADO") {
+            return response.status(404).json({ error: "Cliente não encontrado." });
+        }
+        console.error("Erro ao buscar cliente por ID:", error);
+        return response.status(500).json({ error: "Erro interno do servidor" });
+    }
+});

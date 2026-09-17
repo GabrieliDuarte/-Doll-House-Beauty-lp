@@ -27,6 +27,23 @@ class ClienteService {
         }
         return cliente;
     }
+
+    // Busca uma cliente específica pelo ID
+    async getById(id: string): Promise<Cliente> {
+        try {
+            const res = await pool.query<Cliente>("SELECT * FROM clientes WHERE id = $1", [id]);
+            
+            if (res.rows.length === 0) {
+                throw new Error("CLIENTE_NAO_ENCONTRADO");
+            }
+            
+            return res.rows[0];
+        } catch (error: any) {
+            if (error.message === "CLIENTE_NAO_ENCONTRADO") throw error;
+            console.error("Erro ao buscar cliente por ID:", error);
+            throw new Error("Erro no banco de dados");
+        }
+    }
 }
 
 export const clienteService = new ClienteService();
